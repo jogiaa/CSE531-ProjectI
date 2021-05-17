@@ -1,0 +1,59 @@
+syntax = "proto3";
+package bankingsystem;
+
+service Transaction {
+  // Returns interface response for the Customer/Branch.
+  rpc MsgDelivery(BankRequest) returns (BankResponse) {}
+}
+
+//Two type of entities
+enum entity{
+  customer = 0;
+  branch = 1;
+}
+
+//Interface operations
+enum operation{
+  propagate = 0;
+  propagate_deposit = 5;
+  propagate_withdraw = 1;
+  deposit = 2;
+  query = 3;
+  withdraw = 4;
+}
+
+//Response status of the interface. 'Unknown' is not going to be used anywhere
+//proto3 doesn't populate the elements with 0 value.And enums require the first elements to be
+//zero.
+enum resultType{
+  unknown = 0;
+  failure = 1;
+  success = 2;
+}
+
+//part of the request events
+message inputEvent{
+  int32 id = 1;
+  operation interface = 2;
+  int32 money = 3;
+}
+
+//request for the Branch
+message BankRequest{
+  int32 id = 1;
+  entity type = 3;
+  repeated inputEvent events = 2;
+}
+
+//part of the response 'recv' element
+message outputEvent{
+  operation interface = 1;
+  resultType result = 2;
+  int32 money = 3;
+}
+
+//response from the branch
+message BankResponse{
+  int32 id = 1;
+  repeated outputEvent recv = 2;
+}
